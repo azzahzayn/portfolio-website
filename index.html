@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Azzah Zayn | RPG Portfolio Quest</title>
+    <!-- Google Font for retro pixel text -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="index.css">
+</head>
+<body>
+    <!-- Main Game Container -->
+    <div id="game-container">
+        <!-- Canvas for RPG Game Map -->
+        <canvas id="game-canvas"></canvas>
+
+        <!-- CRT Scanline Effect Overlay -->
+        <div class="crt-overlay"></div>
+
+        <!-- HUD (Heads-Up Display) -->
+        <div id="hud" class="hidden">
+            <div class="hud-left">
+                <div class="character-plate">
+                    <div class="char-portrait-mini" id="hud-char-portrait"></div>
+                    <div class="char-details">
+                        <div class="char-name" id="hud-char-name">Azzah Zayn</div>
+                        <div class="char-class" id="hud-char-class">Code Wizard</div>
+                    </div>
+                </div>
+                <div class="status-bars">
+                    <div class="status-bar-container hp">
+                        <span class="bar-label">HP</span>
+                        <div class="bar-bg"><div class="bar-fill" id="hp-bar" style="width: 100%;"></div></div>
+                        <span class="bar-text" id="hp-text">100/100</span>
+                    </div>
+                    <div class="status-bar-container xp">
+                        <span class="bar-label">XP</span>
+                        <div class="bar-bg"><div class="bar-fill" id="xp-bar" style="width: 94.2%;"></div></div>
+                        <span class="bar-text" id="xp-text">942/1000</span>
+                    </div>
+                </div>
+            </div>
+            <div class="hud-center">
+                <div class="active-area-indicator" id="area-indicator">Starting Area</div>
+            </div>
+            <div class="hud-right">
+                <button class="retro-btn hud-btn" id="sound-btn" title="Toggle Sound">🔊 Sound</button>
+                <button class="retro-btn hud-btn" id="menu-btn">🎒 Inventory (Tab)</button>
+            </div>
+        </div>
+
+        <!-- Start / Character Selection Screen -->
+        <div id="start-screen">
+            <div class="start-bg"></div>
+            <div class="start-content retro-panel">
+                <h1 class="game-title">AZZAH'S PORTFOLIO QUEST</h1>
+                <p class="subtitle">Select your character class to begin the adventure:</p>
+
+                <div class="class-selector">
+                    <!-- Mage Class -->
+                    <div class="class-card selected" data-class="mage">
+                        <div class="class-portrait-wrapper">
+                            <img src="assets/mage_portrait.png" alt="Mage" class="class-portrait">
+                        </div>
+                        <h3>Code Wizard</h3>
+                        <p class="class-desc">Manipulates variables and weaves neural networks to solve complex algorithmic puzzles.</p>
+                        <div class="class-stats">
+                            <div class="stat-row"><span>INT (AI/ML):</span><span class="stat-val">★★★★★</span></div>
+                            <div class="stat-row"><span>DEF (Cybersec):</span><span class="stat-val">★★★★☆</span></div>
+                            <div class="stat-row"><span>AGI (Backend):</span><span class="stat-val">★★★☆☆</span></div>
+                            <div class="stat-row"><span>STR (Frontend):</span><span class="stat-val">★★★★☆</span></div>
+                        </div>
+                    </div>
+
+                    <!-- Knight Class -->
+                    <div class="class-card" data-class="knight">
+                        <div class="class-portrait-wrapper">
+                            <img src="assets/knight_portrait.png" alt="Knight" class="class-portrait">
+                        </div>
+                        <h3>Cyber Knight</h3>
+                        <p class="class-desc">Wields security scanners and guards databases against malicious exploits and memory leaks.</p>
+                        <div class="class-stats">
+                            <div class="stat-row"><span>DEF (Cybersec):</span><span class="stat-val">★★★★★</span></div>
+                            <div class="stat-row"><span>AGI (Backend):</span><span class="stat-val">★★★★☆</span></div>
+                            <div class="stat-row"><span>INT (AI/ML):</span><span class="stat-val">★★★★☆</span></div>
+                            <div class="stat-row"><span>STR (Frontend):</span><span class="stat-val">★★★☆☆</span></div>
+                        </div>
+                    </div>
+
+                    <!-- Rogue Class -->
+                    <div class="class-card" data-class="rogue">
+                        <div class="class-portrait-wrapper">
+                            <img src="assets/rogue_portrait.png" alt="Rogue" class="class-portrait">
+                        </div>
+                        <h3>Agile Developer</h3>
+                        <p class="class-desc">Moves swiftly through CSS styles and creates lightning-fast multi-threaded port scanners.</p>
+                        <div class="class-stats">
+                            <div class="stat-row"><span>AGI (Backend):</span><span class="stat-val">★★★★★</span></div>
+                            <div class="stat-row"><span>STR (Frontend):</span><span class="stat-val">★★★★☆</span></div>
+                            <div class="stat-row"><span>DEF (Cybersec):</span><span class="stat-val">★★★★☆</span></div>
+                            <div class="stat-row"><span>INT (AI/ML):</span><span class="stat-val">★★★☆☆</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="start-controls">
+                    <button id="start-btn" class="retro-btn large-btn">ENTER COZY VILLAGE</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Interaction Prompt Overlay (e.g. "Press [E] to Open Chest") -->
+        <div id="interaction-prompt" class="hidden">
+            <div class="prompt-key">E</div>
+            <div class="prompt-text">Open Chest</div>
+        </div>
+
+        <!-- UI MODALS -->
+
+        <!-- 1. Modal: About Me (Inside the Tavern / House) -->
+        <div id="modal-about" class="modal hidden">
+            <div class="modal-content retro-panel medium-panel">
+                <button class="close-btn">&times;</button>
+                <h2 class="modal-title">📖 CHARACTER BIO</h2>
+                
+                <div class="modal-body scrollable">
+                    <div class="bio-section">
+                        <div class="bio-avatar-large" id="bio-avatar"></div>
+                        <div class="bio-intro">
+                            <h3>Azzah Zayn H.</h3>
+                            <p class="role-badge">Level 4 AI & Computer Science Engineer</p>
+                            <p class="bio-text" id="bio-summary-text"></p>
+                        </div>
+                    </div>
+
+                    <div class="divider"></div>
+
+                    <h3 class="section-heading">🎓 EDUCATION HISTORY</h3>
+                    <div class="education-timeline" id="education-timeline-container">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. Modal: Projects (Inside the Vault / Chests) -->
+        <div id="modal-projects" class="modal hidden">
+            <div class="modal-content retro-panel large-panel">
+                <button class="close-btn">&times;</button>
+                <h2 class="modal-title" id="project-modal-title">💎 TREASURE ACQUIRED</h2>
+                
+                <div class="modal-body scrollable">
+                    <div class="project-details">
+                        <div class="project-header">
+                            <div class="chest-art-large open"></div>
+                            <div class="project-title-area">
+                                <span class="project-rarity" id="proj-rarity">Legendary Chest</span>
+                                <h3 id="proj-title">CWE Security Repository Analyzer</h3>
+                                <span class="project-category" id="proj-category">Cybersecurity & AI</span>
+                            </div>
+                        </div>
+
+                        <div class="divider"></div>
+
+                        <div class="project-desc">
+                            <h4>Description:</h4>
+                            <p id="proj-desc"></p>
+                        </div>
+
+                        <div class="project-tech">
+                            <h4>Enchanted Runes (Tech Stack):</h4>
+                            <div class="tech-tags" id="proj-tech-container">
+                                <!-- Populated by JS -->
+                            </div>
+                        </div>
+
+                        <div class="divider"></div>
+
+                        <div class="project-actions">
+                            <a href="#" target="_blank" class="retro-btn" id="proj-link">🔗 Inspect Source (GitHub)</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. Modal: Skills (Inside the Mystic Grove / Crystals) -->
+        <div id="modal-skills" class="modal hidden">
+            <div class="modal-content retro-panel medium-panel">
+                <button class="close-btn">&times;</button>
+                <h2 class="modal-title">🔮 SPELLBOOK & KEY COMPETENCIES</h2>
+                
+                <div class="modal-body scrollable">
+                    <p class="skills-intro">Technical masteries categorized by domain. Complete quests to increase skill levels.</p>
+                    
+                    <div class="skills-tabs">
+                        <button class="skill-tab-btn active" data-skill-cat="languages">Languages</button>
+                        <button class="skill-tab-btn" data-skill-cat="ai_ml">AI/ML</button>
+                        <button class="skill-tab-btn" data-skill-cat="cybersecurity">Cybersec</button>
+                        <button class="skill-tab-btn" data-skill-cat="web">Web Tech</button>
+                        <button class="skill-tab-btn" data-skill-cat="tools">Tools</button>
+                    </div>
+
+                    <div class="skills-content-container" id="skills-list">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. Modal: Contact (Mailbox) -->
+        <div id="modal-contact" class="modal hidden">
+            <div class="modal-content retro-panel small-panel">
+                <button class="close-btn">&times;</button>
+                <h2 class="modal-title">✉️ SEND A SCROLL</h2>
+                
+                <div class="modal-body scrollable">
+                    <p class="contact-sub">Have a quest for me? Drop a message or connect through social crystals.</p>
+                    
+                    <form id="contact-form" class="retro-form">
+                        <div class="form-group">
+                            <label for="contact-name">Adventurer Name:</label>
+                            <input type="text" id="contact-name" name="name" required placeholder="e.g. John Doe">
+                        </div>
+                        <div class="form-group">
+                            <label for="contact-email">Return Address (Email):</label>
+                            <input type="email" id="contact-email" name="email" required placeholder="e.g. john@domain.com">
+                        </div>
+                        <div class="form-group">
+                            <label for="contact-msg">Scroll Content (Message):</label>
+                            <textarea id="contact-msg" name="message" required placeholder="Describe your quest details..."></textarea>
+                        </div>
+                        <button type="submit" class="retro-btn block-btn">SEND COURIER PIGEON</button>
+                    </form>
+                    
+                    <div id="form-feedback" class="hidden"></div>
+
+                    <div class="divider"></div>
+
+                    <h4 class="center-text">Connect Crystals:</h4>
+                    <div class="social-links">
+                        <a href="https://www.linkedin.com/in/azzah-zayn-557623307/" target="_blank" class="social-link linkedin">LinkedIn</a>
+                        <a href="mailto:azzahzaynh.b23cs2124@mbcet.ac.in" class="social-link email">Email</a>
+                        <a href="https://github.com/" target="_blank" class="social-link github">GitHub</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 5. Modal: Inventory / Pause Menu (Tab/I Key) -->
+        <div id="modal-pause" class="modal hidden">
+            <div class="modal-content retro-panel large-panel">
+                <button class="close-btn">&times;</button>
+                <h2 class="modal-title" id="pause-title">🎒 INVENTORY & STATUS</h2>
+
+                <div class="inventory-container">
+                    <!-- Left Column: Character Stats & Info -->
+                    <div class="inventory-status">
+                        <div class="status-avatar-wrapper">
+                            <div class="status-avatar" id="inv-avatar"></div>
+                            <div class="status-char-info">
+                                <h3 id="inv-name">Azzah Zayn H.</h3>
+                                <p class="inv-level" id="inv-level-label">Level 4 Code Wizard</p>
+                            </div>
+                        </div>
+                        
+                        <div class="divider"></div>
+                        
+                        <h4>Attributes:</h4>
+                        <div class="attributes-list">
+                            <div class="attribute-row" title="Strength (Frontend Dev / UI design)">
+                                <span>💪 STR (Frontend)</span>
+                                <span class="attr-val" id="attr-str">80</span>
+                            </div>
+                            <div class="attribute-row" title="Agility (Backend Dev / Scripts / Fast Scanners)">
+                                <span>⚡ AGI (Backend)</span>
+                                <span class="attr-val" id="attr-agi">85</span>
+                            </div>
+                            <div class="attribute-row" title="Intelligence (AI & Machine Learning / Algorithms)">
+                                <span>🔮 INT (AI/ML)</span>
+                                <span class="attr-val" id="attr-int">94</span>
+                            </div>
+                            <div class="attribute-row" title="Defense (Cybersecurity / Penetration Testing)">
+                                <span>🛡️ DEF (Cybersec)</span>
+                                <span class="attr-val" id="attr-def">88</span>
+                            </div>
+                            <div class="attribute-row" title="Luck (Hackathons / Problem Solving)">
+                                <span>🍀 LCK (Hackathons)</span>
+                                <span class="attr-val" id="attr-lck">90</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Column: Interactive Inventory Tabs (Equip, Items, Quests) -->
+                    <div class="inventory-tabs-container">
+                        <div class="inventory-tabs">
+                            <button class="inv-tab-btn active" data-inv-tab="equip">Equipment</button>
+                            <button class="inv-tab-btn" data-inv-tab="items">Items (Projects)</button>
+                            <button class="inv-tab-btn" data-inv-tab="quests">Quest Log</button>
+                        </div>
+
+                        <!-- Tab: Equipment -->
+                        <div class="inv-tab-content active" id="inv-tab-equip">
+                            <p class="tab-desc">Equipped gear representing technical tools and environments.</p>
+                            <div class="equipment-grid">
+                                <div class="eq-slot" id="eq-weapon">
+                                    <div class="eq-icon weapon">⚔️</div>
+                                    <div class="eq-details">
+                                        <div class="eq-name rarity-epic" id="eq-weapon-name">VS Code</div>
+                                        <div class="eq-desc" id="eq-weapon-desc">Deals +50 Coding Damage.</div>
+                                    </div>
+                                </div>
+                                <div class="eq-slot" id="eq-shield">
+                                    <div class="eq-icon shield">🛡️</div>
+                                    <div class="eq-details">
+                                        <div class="eq-name rarity-rare" id="eq-shield-name">FastAPI Shield</div>
+                                        <div class="eq-desc" id="eq-shield-desc">Protects from crashes.</div>
+                                    </div>
+                                </div>
+                                <div class="eq-slot" id="eq-armor">
+                                    <div class="eq-icon armor">🥋</div>
+                                    <div class="eq-details">
+                                        <div class="eq-name rarity-legendary" id="eq-armor-name">Kali Linux Cloak</div>
+                                        <div class="eq-desc" id="eq-armor-desc">Increases security defense.</div>
+                                    </div>
+                                </div>
+                                <div class="eq-slot" id="eq-accessory">
+                                    <div class="eq-icon accessory">📿</div>
+                                    <div class="eq-details">
+                                        <div class="eq-name rarity-mythic" id="eq-acc-name">Gemini Pendant</div>
+                                        <div class="eq-desc" id="eq-acc-desc">Provides AI insight.</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tab: Items (Projects) -->
+                        <div class="inv-tab-content" id="inv-tab-items">
+                            <p class="tab-desc">Use items from your inventory to explore projects.</p>
+                            <div class="items-list scrollable" id="inv-items-container">
+                                <!-- Populated by JS -->
+                            </div>
+                        </div>
+
+                        <!-- Tab: Quests (Internships / Hackathons) -->
+                        <div class="inv-tab-content" id="inv-tab-quests">
+                            <p class="tab-desc">Track progress of your professional career milestones.</p>
+                            <div class="quests-list scrollable" id="inv-quests-container">
+                                <!-- Populated by JS -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Floating Controls Helper (Bottom-Left) -->
+        <div id="controls-helper">
+            <div class="helper-row"><span class="key-badge">WASD / Arrow Keys</span> Move Character</div>
+            <div class="helper-row"><span class="key-badge">Space / Enter</span> Interact with Objects</div>
+            <div class="helper-row"><span class="key-badge">Tab / I</span> Open Inventory / Stats</div>
+            <div class="helper-row"><span class="key-badge">Mouse Click</span> Pathfind / Move to Target</div>
+        </div>
+    </div>
+
+    <!-- Script imports -->
+    <script src="data.js"></script>
+    <script src="game.js"></script>
+</body>
+</html>
