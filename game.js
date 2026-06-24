@@ -753,7 +753,7 @@ const game = {
             const classInfo = PORTFOLIO_DATA.player.classInfo[classKey];
 
             document.getElementById("hud-char-class").textContent = classInfo.className;
-            document.getElementById("hud-char-portrait").style.backgroundImage = `url('assets/${classKey}_portrait.png')`;
+            document.getElementById("hud-char-portrait").style.backgroundImage = `url('https://raw.githubusercontent.com/azzahzayn/portfolio-website/main/${classKey}_portrait.png')`;
 
             // Inventory portrait
             document.getElementById("inv-avatar").style.backgroundImage = `url('https://raw.githubusercontent.com/azzahzayn/portfolio-website/main/${classKey}_portrait.png')`;
