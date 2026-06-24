@@ -756,7 +756,7 @@ const game = {
             document.getElementById("hud-char-portrait").style.backgroundImage = `url('assets/${classKey}_portrait.png')`;
 
             // Inventory portrait
-            document.getElementById("inv-avatar").style.backgroundImage = `url('assets/${classKey}_portrait.png')`;
+            document.getElementById("inv-avatar").style.backgroundImage = `url('https://raw.githubusercontent.com/azzahzayn/portfolio-website/main/${classKey}_portrait.png')`;
             document.getElementById("inv-level-label").textContent = `Level ${PORTFOLIO_DATA.player.level} ${classInfo.className}`;
 
             // Hide start screen, show HUD
