@@ -868,7 +868,7 @@ const game = {
     populateInventoryData() {
         // Bio summary
         document.getElementById("bio-summary-text").textContent = PORTFOLIO_DATA.about.summary;
-        document.getElementById("bio-avatar").style.backgroundImage = `url('assets/${this.player.classSelected}_portrait.png')`;
+        document.getElementById("bio-avatar").style.backgroundImage = `url('https://raw.githubusercontent.com/azzahzayn/portfolio-website/main/${this.player.classSelected}_portrait.png')`;
 
         // Education
         const eduContainer = document.getElementById("education-timeline-container");
